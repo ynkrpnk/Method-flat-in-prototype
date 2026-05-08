@@ -1,9 +1,10 @@
-'use strict';
+"use strict";
 
 function MyArray() {
   this.length = 0;
+
   for (let i = 0; i < arguments.length; i++) {
-    this[i] = arguments[i];
+    this[this.length] = arguments[i];
     this.length++;
   }
 }
@@ -28,17 +29,18 @@ function MyArrayProto() {
 
   this.concat = function (...args) {
     const res = new MyArray();
+
     for (let i = 0; i < this.length; i++) {
       res.push(this[i]);
     }
+
     for (let i = 0; i < args.length; i++) {
-      const currentArg = args[i];
-      if (MyArray.isMyArray(currentArg)) {
-        for (let j = 0; j < currentArg.length; j++) {
-          res.push(currentArg[j]);
+      if (MyArray.isMyArray(args[i])) {
+        for (let j = 0; j < args[i].length; j++) {
+          res.push(args[i][j]);
         }
       } else {
-        res.push(currentArg);
+        res.push(args[i]);
       }
     }
     return res;
@@ -49,8 +51,8 @@ function MyArrayProto() {
 
     this.forEach((item) => {
       if (MyArray.isMyArray(item) && depth > 0) {
-        const flattenedSubArray = item.flat(depth - 1);
-        result = result.concat(flattenedSubArray);
+        const flattened = item.flat(depth - 1);
+        result = result.concat(flattened);
       } else {
         result = result.concat(item);
       }
@@ -62,9 +64,13 @@ function MyArrayProto() {
 
 MyArray.prototype = new MyArrayProto();
 
-const myArr1 = new MyArray([1, 2, [3, 4, [5, 6, [7, 8, [9, 10]]]]]);
-const nested = new MyArray(myArr1); // [[1, 2], [3, 4], 5]
+const arr1 = new MyArray(1, 2, new MyArray(3, 4));
+console.log("Test 1:", arr1.flat());
 
+const arr2 = new MyArray(1, 2, new MyArray(3, 4, new MyArray(5, 6)));
+console.log("Test 2:", arr2.flat());
 
-const flatResult = nested.flat(1);
-console.log(flatResult);
+console.log("Test 3:", arr2.flat(2));
+
+const arr4 = new MyArray(1, new MyArray(2, new MyArray(3, new MyArray(4))));
+console.log("Test 4:", arr4.flat(Infinity));
