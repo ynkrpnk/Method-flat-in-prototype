@@ -43,18 +43,19 @@ function MyArrayProto() {
         res.push(args[i]);
       }
     }
+
     return res;
   };
 
   this.flat = function (depth = 1) {
-    let result = new MyArray();
+    const result = new MyArray();
 
     this.forEach((item) => {
       if (MyArray.isMyArray(item) && depth > 0) {
         const flattened = item.flat(depth - 1);
-        result = result.concat(flattened);
+        flattened.forEach((el) => result.push(el));
       } else {
-        result = result.concat(item);
+        result.push(item);
       }
     });
 
@@ -73,4 +74,4 @@ console.log("Test 2:", arr2.flat());
 console.log("Test 3:", arr2.flat(2));
 
 const arr4 = new MyArray(1, new MyArray(2, new MyArray(3, new MyArray(4))));
-console.log("Test 4:", arr4.flat(Infinity));
+console.log("Test 4 (Infinity):", arr4.flat(Infinity));
